@@ -71,7 +71,7 @@ impl RelFs {
 impl LogixVfs for RelFs {
     type RoFile = File;
 
-    fn open_file(&mut self, path: &Path) -> Result<Self::RoFile, crate::Error> {
+    fn open_file(&self, path: &Path) -> Result<Self::RoFile, crate::Error> {
         match self.resolve_path(false, path) {
             Ok(full_path) => Ok(File::open(full_path)?),
             Err(e) => todo!("{e:?}"),
