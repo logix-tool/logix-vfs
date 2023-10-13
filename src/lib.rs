@@ -4,8 +4,12 @@ mod rel_fs;
 
 pub use rel_fs::RelFs;
 
+#[derive(thiserror::Error, Debug)]
 pub enum Error {
+    #[error("Not found")]
     NotFound,
+
+    #[error("Access denied")]
     AccessDenied,
 }
 
