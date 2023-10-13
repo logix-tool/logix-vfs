@@ -46,6 +46,12 @@ impl RelFs {
                     level += 1;
                     ret.push(name);
                 }
+                Component::RootDir => {
+                    while level > 0 {
+                        level -= 1;
+                        ret.pop();
+                    }
+                }
                 Component::CurDir => {}
                 Component::ParentDir => {
                     if level == 0 {
@@ -154,6 +160,16 @@ mod tests {
         assert_eq!(
             fs.resolve_path(true, "../config.toml"),
             Ok(PathBuf::from(".config/config.toml"))
+        );
+
+        assert_eq!(
+            fs.resolve_path(false, "/.bashrc"),
+            Ok(PathBuf::from("/home/zeldor/.bashrc"))
+        );
+
+        assert_eq!(
+            fs.resolve_path(true, "/.bashrc"),
+            Ok(PathBuf::from(".bashrc"))
         );
     }
 }
