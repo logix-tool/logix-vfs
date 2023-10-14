@@ -24,7 +24,7 @@ impl From<std::io::Error> for Error {
     }
 }
 
-pub trait LogixVfs {
+pub trait LogixVfs: std::fmt::Debug {
     type RoFile: std::io::Read;
 
     fn open_file(&self, path: &Path) -> Result<Self::RoFile, Error>;

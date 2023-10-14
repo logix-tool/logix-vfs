@@ -1,6 +1,6 @@
 [package]
 name = "logix-vfs"
-version = "0.2.0"
+version = "0.3.0"
 description = "A virtual file system abstraction used by logix"
 repository = "https://github.com/logix-tool/logix-vfs"
 edition = "2021"

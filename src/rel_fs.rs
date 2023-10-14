@@ -10,6 +10,7 @@ pub enum Error {
     OutsideRoot,
 }
 
+#[derive(Debug)]
 pub struct RelFs {
     root: PathBuf,
     cur_dir: PathBuf,
