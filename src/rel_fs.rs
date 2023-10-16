@@ -3,12 +3,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use crate::LogixVfs;
-
-#[derive(Debug, PartialEq)]
-pub enum Error {
-    OutsideRoot,
-}
+use crate::{Error, LogixVfs};
 
 #[derive(Debug)]
 pub struct RelFs {
@@ -56,7 +51,7 @@ impl RelFs {
                 Component::CurDir => {}
                 Component::ParentDir => {
                     if level == 0 {
-                        return Err(Error::OutsideRoot);
+                        return Err(Error::PathOutsideBounds);
                     }
                     level -= 1;
                     ret.pop();
@@ -72,7 +67,11 @@ impl RelFs {
 impl LogixVfs for RelFs {
     type RoFile = File;
 
-    fn open_file(&self, path: &Path) -> Result<Self::RoFile, crate::Error> {
+    fn canonicalize_path(&self, path: &Path) -> Result<PathBuf, Error> {
+        self.resolve_path(true, path)
+    }
+
+    fn open_file(&self, path: &Path) -> Result<Self::RoFile, Error> {
         match self.resolve_path(false, path) {
             Ok(full_path) => Ok(File::open(full_path)?),
             Err(e) => todo!("{e:?}"),
