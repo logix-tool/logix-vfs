@@ -16,13 +16,48 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Format
-      run: cargo fmt --check --verbose
-    - name: Lint
-      run: cargo clippy --verbose
-    - name: Build
-      run: cargo build --verbose
-    - name: Run tests
-      run: cargo test --verbose
-    - name: Test publish
-      run: cargo publish --dry-run --verbose
+
+    - uses: logix-tool/github-actions/cargo-deny@main
+      with:
+          token: ${{ secrets.READ_PUBLIC_TOKEN }}
+
+    - uses: logix-tool/github-actions/cargo-semver-checks@main
+      with:
+          token: ${{ secrets.READ_PUBLIC_TOKEN }}
+
+    - name: Run linters
+      run: |
+          cargo fmt --check --verbose
+          cargo clippy --verbose
+
+    - name: Run build
+      run: |
+          echo "Debug build"
+          cargo build
+          echo "Build tests"
+          cargo build --tests
+          echo "Release build"
+          cargo build --release
+
+    - name: Run checks
+      run: |
+        echo "Running cargo deny check"
+        cargo deny check
+
+        echo "Running cargo semver-checks"
+        cargo semver-checks
+
+        echo "Running cargo outdated"
+        cargo outdated --exit-code 1
+
+        # TODO(2023.10): requires nightly
+        #echo "Running cargo udeps"
+        #rustup run nightly cargo udeps
+
+        # TODO(2023.10): no pre-built binary?
+        #echo "Running cargo audit"
+        #rustup cargo audit
+
+        # TODO(2023.10): no pre-built binary?
+        #echo "Running cargo pants"
+        #rustup cargo pants
