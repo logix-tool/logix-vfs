@@ -19,6 +19,9 @@ pub enum Error {
 
     #[error("The path is outside acceptable bounds")]
     PathOutsideBounds,
+
+    #[error("{0}")]
+    Other(String),
 }
 
 impl Error {
@@ -27,6 +30,7 @@ impl Error {
             Self::NotFound => ErrorKind::NotFound.into(),
             Self::AccessDenied => ErrorKind::PermissionDenied.into(),
             Self::PathOutsideBounds => ErrorKind::InvalidInput.into(),
+            Self::Other(message) => std::io::Error::new(ErrorKind::Other, message.as_str()),
         }
     }
 }
