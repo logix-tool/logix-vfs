@@ -20,6 +20,9 @@ pub enum Error {
     #[error("The path is outside acceptable bounds")]
     PathOutsideBounds,
 
+    /// Used for other errors that is not defined already. Do not depend on this
+    /// for anything other than logging. If you need to check an error that is
+    /// reported as other, please request the error to be added instead.
     #[error("{0}")]
     Other(String),
 }
@@ -40,7 +43,7 @@ impl From<std::io::Error> for Error {
         match e.kind() {
             ErrorKind::NotFound => Self::NotFound,
             ErrorKind::PermissionDenied => Self::AccessDenied,
-            _ => todo!("{e:?}"),
+            _ => Self::Other(e.to_string()),
         }
     }
 }
