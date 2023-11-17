@@ -51,7 +51,9 @@ impl RelFs {
                 Component::CurDir => {}
                 Component::ParentDir => {
                     if level == 0 {
-                        return Err(Error::PathOutsideBounds);
+                        return Err(Error::PathOutsideBounds {
+                            path: path.to_path_buf(),
+                        });
                     }
                     level -= 1;
                     ret.pop();
@@ -73,7 +75,9 @@ impl LogixVfs for RelFs {
 
     fn open_file(&self, path: &Path) -> Result<Self::RoFile, Error> {
         match self.resolve_path(false, path) {
-            Ok(full_path) => Ok(File::open(full_path)?),
+            Ok(full_path) => {
+                File::open(full_path).map_err(|e| Error::from_io(path.to_path_buf(), e))
+            }
             Err(e) => todo!("{e:?}"),
         }
     }

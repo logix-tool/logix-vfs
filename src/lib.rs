@@ -11,14 +11,14 @@ pub use rel_fs::RelFs;
 
 #[derive(thiserror::Error, Debug, PartialEq, Eq)]
 pub enum Error {
-    #[error("Not found")]
-    NotFound,
+    #[error("Failed to locate {path:?}")]
+    NotFound { path: PathBuf },
 
-    #[error("Access denied")]
-    AccessDenied,
+    #[error("Failed to access {path:?}")]
+    AccessDenied { path: PathBuf },
 
-    #[error("The path is outside acceptable bounds")]
-    PathOutsideBounds,
+    #[error("The path {path:?} is outside acceptable bounds")]
+    PathOutsideBounds { path: PathBuf },
 
     /// Used for other errors that is not defined already. Do not depend on this
     /// for anything other than logging. If you need to check an error that is
@@ -30,19 +30,17 @@ pub enum Error {
 impl Error {
     pub fn to_io_error(&self) -> std::io::Error {
         match self {
-            Self::NotFound => ErrorKind::NotFound.into(),
-            Self::AccessDenied => ErrorKind::PermissionDenied.into(),
-            Self::PathOutsideBounds => ErrorKind::InvalidInput.into(),
+            Self::NotFound { .. } => ErrorKind::NotFound.into(),
+            Self::AccessDenied { .. } => ErrorKind::PermissionDenied.into(),
+            Self::PathOutsideBounds { .. } => ErrorKind::InvalidInput.into(),
             Self::Other(message) => std::io::Error::new(ErrorKind::Other, message.as_str()),
         }
     }
-}
 
-impl From<std::io::Error> for Error {
-    fn from(e: std::io::Error) -> Self {
+    pub fn from_io(path: PathBuf, e: std::io::Error) -> Self {
         match e.kind() {
-            ErrorKind::NotFound => Self::NotFound,
-            ErrorKind::PermissionDenied => Self::AccessDenied,
+            ErrorKind::NotFound => Self::NotFound { path },
+            ErrorKind::PermissionDenied => Self::AccessDenied { path },
             _ => Self::Other(e.to_string()),
         }
     }
