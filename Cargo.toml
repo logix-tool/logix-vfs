@@ -1,6 +1,6 @@
 [package]
 name = "logix-vfs"
-version = "0.6.0"
+version = "0.6.1"
 description = "A virtual file system abstraction used by logix"
 repository = "https://github.com/logix-tool/logix-vfs"
 edition = "2021"
@@ -13,4 +13,4 @@ license = "MPL-2.0"
 categories = ["filesystem"]
 
 [dependencies]
-thiserror = "1.0.49"
+thiserror = "1.0.56"
