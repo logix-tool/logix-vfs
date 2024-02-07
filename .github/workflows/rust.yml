@@ -27,37 +27,16 @@ jobs:
 
     - name: Run linters
       run: |
-          cargo fmt --check --verbose
-          cargo clippy --verbose
+          cargo xtask lints
 
     - name: Run build
       run: |
-          echo "Debug build"
-          cargo build
-          echo "Build tests"
-          cargo build --tests
-          echo "Release build"
-          cargo build --release
+          cargo xtask build-all
 
     - name: Run checks
       run: |
-        echo "Running cargo deny check"
-        cargo deny check
+          cargo xtask all-checks
 
-        echo "Running cargo semver-checks"
-        cargo semver-checks
-
-        echo "Running cargo outdated"
-        cargo outdated --exit-code 1
-
-        # TODO(2023.10): requires nightly
-        #echo "Running cargo udeps"
-        #rustup run nightly cargo udeps
-
-        # TODO(2023.10): no pre-built binary?
-        #echo "Running cargo audit"
-        #rustup cargo audit
-
-        # TODO(2023.10): no pre-built binary?
-        #echo "Running cargo pants"
-        #rustup cargo pants
+    - name: Run tests
+      run: |
+          cargo xtask all-tests
