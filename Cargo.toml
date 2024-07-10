@@ -1,15 +1,12 @@
 [package]
 name = "logix-vfs"
-version = "0.7.0"
 description = "A virtual file system abstraction used by logix"
-repository = "https://github.com/logix-tool/logix-vfs"
+version.workspace = true
+repository.workspace = true
+authors.workspace = true
+license.workspace = true
 edition = "2021"
-authors = [
-  "Bjørn Ove Hay Andersen <bjrnove@gmail.com>",
-  "Gigantos <gigantos@gigantos.net>",
-]
 readme = "README.md"
-license = "MPL-2.0"
 categories = ["filesystem"]
 
 [dependencies]
@@ -17,3 +14,12 @@ thiserror = "1.0.56"
 
 [workspace]
 members = ["xtask"]
+
+[workspace.package]
+version = "0.8.0"
+authors = [
+  "Gigantos <gigantos@gigantos.net>",
+]
+license = "MIT OR Apache-2.0"
+edition = "2021"
+repository = "https://github.com/logix-tool/logix-vfs"
