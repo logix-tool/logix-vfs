@@ -10,13 +10,13 @@ readme = "README.md"
 categories = ["filesystem"]
 
 [dependencies]
-thiserror = "1.0.56"
+thiserror = "1.0.61"
 
 [workspace]
 members = ["xtask"]
 
 [workspace.package]
-version = "0.8.1"
+version = "0.9.0"
 authors = [
   "Gigantos <gigantos@gigantos.net>",
 ]

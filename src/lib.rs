@@ -5,9 +5,11 @@ use std::{
     path::{Path, PathBuf},
 };
 
-mod rel_fs;
+pub mod mem_fs;
+pub mod rel_fs;
+mod utils;
 
-pub use rel_fs::RelFs;
+pub use crate::{mem_fs::MemFs, rel_fs::RelFs};
 
 #[derive(thiserror::Error, Debug, PartialEq, Eq)]
 pub enum Error {
@@ -60,9 +62,17 @@ impl Error {
     }
 }
 
+pub trait LogixVfsDirEntry {
+    fn path(&self) -> &Path;
+    fn is_dir(&self) -> bool;
+    fn is_file(&self) -> bool;
+    fn is_symlink(&self) -> bool;
+}
+
 pub trait LogixVfs: std::fmt::Debug + Send + Sync {
     type RoFile: std::io::Read;
-    type ReadDir: Iterator<Item = Result<PathBuf, Error>>;
+    type DirEntry: LogixVfsDirEntry;
+    type ReadDir: Iterator<Item = Result<Self::DirEntry, Error>>;
 
     fn canonicalize_path(&self, path: &Path) -> Result<PathBuf, Error>;
     fn open_file(&self, path: &Path) -> Result<Self::RoFile, Error>;

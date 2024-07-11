@@ -3,7 +3,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use crate::{Error, LogixVfs};
+use crate::{utils::PathUtil, Error, LogixVfs};
 
 #[derive(Debug)]
 pub struct RelFs {
@@ -25,50 +25,11 @@ impl RelFs {
     }
 
     fn resolve_path(&self, relative: bool, path: impl AsRef<Path>) -> Result<PathBuf, Error> {
-        use std::path::Component;
-
-        let path = path.as_ref();
-        let mut ret = if relative {
-            self.cur_dir.clone()
-        } else {
-            self.root.join(&self.cur_dir)
-        };
-
-        let mut level = self.cur_dir.components().count();
-
-        for cur in path.components() {
-            match cur {
-                Component::Normal(name) => {
-                    level += 1;
-                    ret.push(name);
-                }
-                Component::RootDir => {
-                    while level > 0 {
-                        level -= 1;
-                        ret.pop();
-                    }
-                }
-                Component::CurDir => {}
-                Component::ParentDir => {
-                    if level == 0 {
-                        return Err(Error::PathOutsideBounds {
-                            path: path.to_path_buf(),
-                        });
-                    }
-                    level -= 1;
-                    ret.pop();
-                }
-                Component::Prefix(prefix) => {
-                    // NOTE(2024.02): Should never happen on platforms other than Windows
-                    return Err(Error::Other(format!(
-                        "Unknown prefix {:?}",
-                        prefix.as_os_str()
-                    )));
-                }
-            }
+        PathUtil {
+            root: &self.root,
+            cur_dir: &self.cur_dir,
         }
-
-        Ok(ret)
+        .resolve_path(relative, path.as_ref())
     }
 }
 
@@ -103,6 +64,7 @@ impl Iterator for ReadDir {
 
 impl LogixVfs for RelFs {
     type RoFile = File;
+    type DirEntry = PathBuf;
     type ReadDir = ReadDir;
 
     fn canonicalize_path(&self, path: &Path) -> Result<PathBuf, Error> {
