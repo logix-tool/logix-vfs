@@ -5,7 +5,7 @@ use std::{
 
 use crate::{utils::PathUtil, Error, LogixVfs};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Clone)]
 pub struct RelFs {
     root: PathBuf,
     cur_dir: PathBuf,
@@ -33,6 +33,7 @@ impl RelFs {
     }
 }
 
+#[derive(Debug)]
 pub struct ReadDir {
     path: PathBuf,
     prefix: PathBuf,

@@ -11,7 +11,7 @@ mod utils;
 
 pub use crate::{mem_fs::MemFs, rel_fs::RelFs};
 
-#[derive(thiserror::Error, Debug, PartialEq, Eq)]
+#[derive(thiserror::Error, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Error {
     #[error("Failed to locate {path:?}")]
     NotFound { path: PathBuf },

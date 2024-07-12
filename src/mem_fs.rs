@@ -9,7 +9,7 @@ use std::{
 
 use crate::{utils::PathUtil, Error, LogixVfs, LogixVfsDirEntry};
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 enum FileData {
     Static(&'static [u8]),
     Arc(Arc<[u8]>),
@@ -24,7 +24,7 @@ impl fmt::Debug for FileData {
     }
 }
 
-#[derive(Default, Debug)]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Default, Debug)]
 enum Entry {
     #[default]
     Empty,
@@ -32,7 +32,7 @@ enum Entry {
     Dir(BTreeMap<OsString, Entry>),
 }
 
-#[derive(Default, Debug)]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Default, Debug)]
 pub struct MemFs {
     root: Entry,
 }
@@ -159,7 +159,7 @@ impl MemFs {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct MemFileData(FileData);
 
 impl AsRef<[u8]> for MemFileData {
@@ -173,11 +173,13 @@ impl AsRef<[u8]> for MemFileData {
 
 pub type MemFile = Cursor<MemFileData>;
 
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 enum DirEntryType {
     File,
     Dir,
 }
 
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct DirEntry {
     path: PathBuf,
     ty: DirEntryType,
@@ -207,6 +209,7 @@ impl LogixVfsDirEntry for DirEntry {
     }
 }
 
+#[derive(Clone, Debug)]
 pub struct ReadDir {
     it: std::vec::IntoIter<DirEntry>,
 }
